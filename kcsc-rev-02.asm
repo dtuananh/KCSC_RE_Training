@@ -60,6 +60,7 @@ _toUpper:
 	ja next
 	sub al, 0x20	;to uppercase a char
 	mov [ecx], al
+	jmp next
 
 done: 
 	ret
