@@ -83,19 +83,19 @@ _revStr:
 	add edi, rev_str
 	dec edi
 	
-  .rev:
-	  cmp ecx, 0
-	  jz .finished
-	  mov al, [esi]
-	  mov ah, [edi]
-	  mov [esi], ah
-	  mov [edi], al
-	  inc esi
-	  dec edi
-	  loop .rev
+	.rev:
+		cmp ecx, 0
+		jz .finished
+		mov al, [esi]
+		mov ah, [edi]
+		mov [esi], ah
+		mov [edi], al
+		inc esi
+		dec edi
+		dec ecx
+		jmp .rev
 	
-  .finished:
-	  sub eax, ebx
-	  pop ebx
-	  ret
-		
+	.finished:
+		sub eax, ebx
+		pop ebx
+		ret
