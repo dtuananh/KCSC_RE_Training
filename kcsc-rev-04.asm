@@ -81,7 +81,7 @@ _revStr:
 	mov esi, eax
 	mov edi, eax
 	add edi, [len]
-	dec edi
+	dec edi		; bỏ qua null
 	.rev:
 		cmp esi, edi
 		jg .finished
