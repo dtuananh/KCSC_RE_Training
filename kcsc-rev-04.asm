@@ -5,9 +5,9 @@ section .data
 	len2 equ $- msg2
 	
 section .bss
-	string resb 255
+	string resb 128
 	len resb 1
-	rev_str resb 255
+	rev_str resb 128
 	
 section .text
 	global _start
@@ -25,7 +25,7 @@ _start:
 	mov eax, 3
 	mov ebx, 0
 	mov ecx, string
-	mov edx, 255
+	mov edx, 128
 	int 0x80
 
 ; Displaying msg2
@@ -43,11 +43,10 @@ _start:
 	xor eax, eax
 	mov eax, string
 	call _revStr
-	mov [rev_str], eax
 	
 ; Print rev-string
 	mov edx, len
-	mov ecx, rev_str
+	mov ecx, eax
 	mov ebx, 1
 	mov eax, 4
 	int 0x80
@@ -78,24 +77,26 @@ _revStr:
 	
 	mov esi, 0
 	mov edi, 0
-	mov ecx, len
+	mov ecx, [len]
 	mov esi, eax
-	add edi, rev_str
+	mov edi, eax
+	add edi, [len]
 	dec edi
-	
 	.rev:
-		cmp ecx, 0
-		jz .finished
-		mov al, [esi]
-		mov ah, [edi]
-		mov [esi], ah
-		mov [edi], al
+		cmp esi, edi
+		jg .finished
+		mov cl, [esi]
+		mov ch, [edi]
+		mov [esi], ch
+		mov [edi], cl
 		inc esi
 		dec edi
-		dec ecx
 		jmp .rev
 	
-	.finished:
+	.finished:		
 		sub eax, ebx
+		inc edi
+		sub edi, [len]
+		mov eax, edi
 		pop ebx
 		ret
