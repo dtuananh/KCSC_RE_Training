@@ -1,3 +1,23 @@
+; Scan a string
+_scanStr:
+	push edx
+	push ecx
+	push ebx
+	push eax
+	
+	mov edx, 255
+	pop eax
+	
+	mov ecx, eax
+	mov ebx, 0
+	mov eax, 3
+	int 0x80
+	
+	pop ebx
+	pop ecx
+	pop edx
+	ret
+
 ; Print interger
 _iPrint:
 	push eax
