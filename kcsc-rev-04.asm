@@ -1,13 +1,14 @@
+%include 'funcs.asm'
+
 section .data
-	msg1 db "Enter a string: ", 0h
+	msg1 db "Enter a string: ", 0x0
 	len1 equ $- msg1
-	msg2 db "Reverse string: ", 0h
+	msg2 db "Reverse string: ", 0x0
 	len2 equ $- msg2
 	
 section .bss
-	string resb 128
+	string resb 255
 	len resb 1
-	rev_str resb 128
 	
 section .text
 	global _start
@@ -15,26 +16,17 @@ section .text
 _start:
 	
 ; Displaying msg1
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, msg1
-	mov edx, len1
-	int 0x80
+	mov eax, msg1
+	call _sPrint
 
 ; Read stdin
-	mov eax, 3
-	mov ebx, 0
-	mov ecx, string
-	mov edx, 128
-	int 0x80
+	mov eax, string
+	call _scanStr
 
 ; Displaying msg2
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, msg2
-	mov edx, len2
-	int 0x80
-	
+	mov eax, msg2
+	call _sPrint
+
 	xor eax, eax		; eax = 0	
 	mov eax, string
 	call _strlen
@@ -45,31 +37,12 @@ _start:
 	call _revStr
 	
 ; Print rev-string
-	mov edx, len
-	mov ecx, eax
-	mov ebx, 1
-	mov eax, 4
-	int 0x80
+	xor eax, eax
+	mov eax, string
+	call _sPrint
 
 ; Exit	
-	mov eax, 1
-	xor ebx, ebx
-	int 0x80
-
-_strlen:
-    	push ebx
-    	mov  ebx, eax
- 
-	.nextchar:
-    		cmp byte [eax], 0xA
-    		jz  .finished
-    		inc eax
-    		jmp .nextchar
- 
-	.finished:
-    		sub eax, ebx
-    		pop ebx
-    		ret
+	call _quit
 
 _revStr:
 	push ebx
@@ -81,7 +54,7 @@ _revStr:
 	mov esi, eax
 	mov edi, eax
 	add edi, [len]
-	dec edi		; bỏ qua null
+	dec edi
 	.rev:
 		cmp esi, edi
 		jg .finished
