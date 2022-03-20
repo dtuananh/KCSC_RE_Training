@@ -56,7 +56,7 @@ _strlen:
   mov ebx, eax
  
   .nextChar:
-     	  cmp byte [eax], 0
+     	  cmp byte [eax], 0xA
     	  jz .finished
     	  inc eax
     	  jmp .nextChar
