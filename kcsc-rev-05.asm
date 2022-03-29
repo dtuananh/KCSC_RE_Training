@@ -57,12 +57,12 @@ ReadString proc
 	pushad			;push eax, ecx, edx, ebx, esp (original value), ebp, esi, edi on stack
 	
 	;Use WinAPI ReadConsole
-	push NULL					;pInputControl = NULL
+	push NULL			;pInputControl = NULL
 	lea ebx, DWORD ptr [ebp - 4]
-	push ebx					;lpNumberOfCharsRead = ebp - 4
-	push MAXBUF					;nNumberOfCharsToRead = MAXBUF
+	push ebx			;lpNumberOfCharsRead = ebp - 4
+	push MAXBUF			;nNumberOfCharsToRead = MAXBUF
 	push DWORD ptr [ebp + 8]	;lpBuffer = offset string
-	push StdInHandle			;hConsoleInput = StdInHandle
+	push StdInHandle		;hConsoleInput = StdInHandle
 	call ReadConsole
 	
 	popad
@@ -82,12 +82,12 @@ WriteString proc
 	call Strlen		;eax = length of string
 	
 	;Use WinAPI WriteConsole
-	push NULL					;lpReserved = NULL
+	push NULL			;lpReserved = NULL
 	lea ebx, DWORD ptr [ebp - 4]
-	push ebx					;lpNumberOfCharsWritten = [ebp - 4]
-	push eax					;nNumberOfCharsToWrite = length of string = eax
+	push ebx			;lpNumberOfCharsWritten = [ebp - 4]
+	push eax			;nNumberOfCharsToWrite = length of string = eax
 	push DWORD ptr [ebp + 8]	;lpBuffer = [ebp + 8]
-	push StdOutHandle			;hConsoleOutput = StdOutHandle
+	push StdOutHandle		;hConsoleOutput = StdOutHandle
 	call WriteConsole
 	
 	popad
