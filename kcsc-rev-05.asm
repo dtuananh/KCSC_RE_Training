@@ -57,18 +57,31 @@ ReadString proc
 	pushad			;push eax, ecx, edx, ebx, esp (original value), ebp, esi, edi on stack
 	
 	;Use WinAPI ReadConsole
-	push NULL			;pInputControl = NULL
-	lea ebx, DWORD ptr [ebp - 4]
-	push ebx			;lpNumberOfCharsRead = ebp - 4
+	push NULL			;pInputControl = NULL					
+	push DWORD ptr [ebp - 4]	;lpNumberOfCharsRead = ebp - 4
 	push MAXBUF			;nNumberOfCharsToRead = MAXBUF
 	push DWORD ptr [ebp + 8]	;lpBuffer = offset string
 	push StdInHandle		;hConsoleInput = StdInHandle
 	call ReadConsole
 	
+	;search line feed (0Dh) character and remove it 
+	mov edi, DWORD ptr [ebp + 8]
+	mov ecx, MAXBUF 
+	cld 				; search forward 
+	mov al, 0Dh 
+	repne scasb 
+	jne L2 				; if not found 0Dh 
+	dec edi 
+	jmp L3 
+L2:
+	mov edi, DWORD ptr [ebp + 8]
+	add edi, MAXBUF 
+L3:	
+	mov BYTE ptr [edi], NULL 	; add null byte 
 	popad
 	add esp, 4		
-	leave
-	ret
+	pop ebp
+	ret 4
 ReadString endp
 
 
@@ -82,18 +95,17 @@ WriteString proc
 	call Strlen		;eax = length of string
 	
 	;Use WinAPI WriteConsole
-	push NULL			;lpReserved = NULL
-	lea ebx, DWORD ptr [ebp - 4]
-	push ebx			;lpNumberOfCharsWritten = [ebp - 4]
-	push eax			;nNumberOfCharsToWrite = length of string = eax
-	push DWORD ptr [ebp + 8]	;lpBuffer = [ebp + 8]
-	push StdOutHandle		;hConsoleOutput = StdOutHandle
+	push NULL				;lpReserved = NULL		
+	push DWORD ptr [ebp - 4]		;lpNumberOfCharsWritten = [ebp - 4]
+	push eax				;nNumberOfCharsToWrite = length of string = eax
+	push DWORD ptr [ebp + 8]		;lpBuffer = [ebp + 8]
+	push StdOutHandle			;hConsoleOutput = StdOutHandle
 	call WriteConsole
 	
 	popad
 	add esp, 4
-	leave
-	ret
+	pop ebp
+	ret 4
 WriteString endp
 
 
@@ -111,8 +123,9 @@ L1:
 	inc eax
 	jmp L1
 L2:
-	leave
-	ret
+	pop edi
+	pop ebp
+	ret 4
 	
 Strlen endp
 
